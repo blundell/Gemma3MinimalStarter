@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -16,6 +18,13 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        val localProperties = Properties().apply {
+            val localPropertiesFile = rootProject.file("local.properties")
+            load(localPropertiesFile.inputStream())
+        }
+        val huggingFaceDownloadApiKey = localProperties.getProperty("huggingface.token")
+        buildConfigField("String", "HUGGINGFACE_DOWNLOAD_API_KEY", "\"$huggingFaceDownloadApiKey\"")
     }
 
     buildTypes {
@@ -38,6 +47,11 @@ android {
 }
 
 dependencies {
+    implementation("com.google.mediapipe:tasks-genai:0.10.22")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.runtime.compose)
